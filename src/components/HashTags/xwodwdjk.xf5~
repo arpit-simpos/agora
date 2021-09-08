@@ -1,0 +1,178 @@
+﻿import React from 'react';
+import '../HashTags/bootstrap.css';
+import '../HashTags/style.css';
+import hashTagService from '../../services/hashTag.service';
+import { Link } from 'react-router-dom';
+import ReactPaginate from 'react-paginate';
+
+
+export class HashTagList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [],
+            TagName: "",
+            Rating: "",
+           // offset: 0,
+            perPage: 10,
+            pageNo:0,
+            totalCount:0
+
+        };
+    }
+
+
+    componentDidMount() {
+        this.fetchLanguages();
+    }
+
+
+
+    refreshPage() {
+        this.fetchLanguages();
+    }
+
+    handlePageClick = (data) => {
+        let selected = data.selected +1;
+      //  let offset = Math.ceil(selected * this.state.perPage);
+        console.log("selected" + selected);
+      //  console.log("offset" + offset);
+
+        this.setState({ pageNo: selected }, () => {
+            this.fetchLanguages();
+        });
+    };
+
+
+
+    async fetchLanguages() {
+
+        var payload = {
+            "pageSize": this.state.perPage,
+            "pageNumber": this.state.pageNo
+        }
+        console.log("page size " + payload.pageSize + " , page no" + payload.pageNumber);
+
+        var a = await new Promise(function (resolve, reject) {
+            hashTagService.getAll(payload).then(result => {
+
+                resolve(result);
+            }).catch(e => {
+                console.log(e);
+            })
+
+        }
+
+
+
+        );
+        this.setState({
+            data: a.data.hashTags,
+            totalCount: Math.ceil(a.data.totalCounts/ this.state.perPage),
+
+        })
+    }
+
+
+    //handleChange(event) {
+    //    let name = event.target.name;
+    //    let value = event.target.value;
+    //    this.setState({ [name]: value });
+    //}
+
+    //handleSubmit(event) {
+    //    event.preventDefault();
+    //    let TagName = this.state.TagName;
+    //    let Ratings = this.state.Rating;
+    //    var json = { TagId: 3, TagName: TagName, Rating: Ratings, VideosCount: 0 }
+    //    var api = 'https://localhost:44303/api/HashTag/insert';
+    //    axios.post(api, json).then(response => "Record inserted");
+    //    console.log("TagName : " + TagName + " ,Ratings : " + Ratings);
+    //    this.refreshPage();
+
+    //}
+
+
+    renderTableData() {
+        console.log(this.state.data);
+        return this.state.data.map((a, index) => {
+            //eslint-disable-next-line
+            const { _Id, tagId, tagName, rating, modifiedAt } = a
+
+            return (
+
+                <tr key={a._Id.increment}>
+                    <td>{a.tagName}</td>
+                    <td>{a.rating}</td>
+                    <td>
+                        <Link
+                            to={"/hashTags/" + a.TagName}
+                            className="badge badge-info">
+                            Edit
+                  </Link>
+                    </td>
+                    <td>
+                        <Link
+                            to={"/hashTags/" + a.TagName}
+                            className="badge badge-danger">
+                            Delete
+                  </Link>
+                    </td>
+
+                </tr>
+
+            )
+        });
+
+
+    }
+
+
+    render() {
+
+        return (
+
+            <div className='container'>
+                <div className='row justify-content-md-center'>
+                    <div className='col-md-3 col-offset-1'>
+                        <span className="input-group-btn">
+
+                            <Link to="/AddHashTag">
+
+                                Add
+                         </Link>
+                        </span>
+                        <table id='a'  className='table table-responsive table-bordered'>
+                            <thead className='thead-light'>
+                                <tr>
+                                    <th > Tag Name </th>
+                                    <th> Ratings </th>
+                                    <th> Edit </th>
+                                    <th> Delete </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.renderTableData()}
+                            </tbody>
+                        </table>
+                        <ReactPaginate
+                            previousLabel={'previous'}
+                            nextLabel={'next'}
+                            breakLabel={'...'}
+                            breakClassName={'break-me'}
+                            pageCount={this.state.totalCount}
+                            marginPagesDisplayed={2}
+                            pageRangeDisplayed={5}
+                            onPageChange={this.handlePageClick}
+                            containerClassName={'pagination'}
+                            activeClassName={'active'}
+                        />
+                    </div>
+
+                    </div>
+
+                </div>
+        )
+    }
+
+}

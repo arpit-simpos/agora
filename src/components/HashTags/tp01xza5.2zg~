@@ -1,0 +1,47 @@
+﻿import React, { Component } from 'react';
+import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import { Link } from 'react-router-dom';
+import './NavMenu.css';
+import { connect } from 'react-redux';
+
+//let totalRecords;
+
+
+class Counter extends Component {
+    constructor(props) {
+        super(props);
+
+        this.props.totalRecords
+
+    }
+
+    componentDidMount() {
+        this.props.TotalRecords;
+    }
+    render() {
+        return (
+            <div><b>Total: {this.props.total} $</b></div>
+
+
+        )
+    }
+}
+const mapStateToProps(state) => {
+    // this.setstate = state;
+    const { hashTags } = state
+    return {
+        total: hashTags.totalRecords
+    }
+    //  console.log('index ' + totalRecords) // state
+    // console.log(arguments[1]) // undefined
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        TotalRecords: () => { dispatch({ type: 'HashTags' }) }
+    }
+}
+
+
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Counter)

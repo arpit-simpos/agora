@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgoraFlexibleClassroomDemo</title>
+  <script src="https://download.agora.io/edu-apaas/release/edu_sdk_1.1.0.1_ga.js"></script>
+</head>
+
+<body>
+  <style>
+    #root1 {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <div id="root1"></div>
+  <script type="text/javascript">
+
+  console.log("Hi i am agora !!!!");
+    AgoraEduSDK.config({
+      // Here pass in the Agora App ID you have got
+      appId: "97e6ada7e8c2401faa7267385d3907f5",
+    })
+    AgoraEduSDK.launch(
+      document.querySelector("#root1"), {
+        // Here pass in the RTM token you have generated
+        rtmToken: "00697e6ada7e8c2401faa7267385d3907f5IAClXIeEZkeL4/+Z/hV1DvnLv65bQfrSR4uU1l+YqNDsrgdWUn4AAAAAEADReTUCCmsXYQEA6AOaJxZh",
+        // The user ID must be the same as the one you used for generating the RTM token
+        userUuid: "5678",
+        userName: "student",
+        roomUuid: "4321",
+        roomName: "demo-class",
+        roleType: 2,
+        roomType: 0,
+        pretest: true,
+        language: "en",
+        startTime: new Date().getTime(),
+        duration: 60 * 30,
+        courseWareList: [],
+        listener: (evt) => {
+          console.log("evt", evt)
+        }
+      }
+    )
+  </script>
+</body>
+
+</html>

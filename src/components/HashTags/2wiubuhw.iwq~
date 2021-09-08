@@ -1,0 +1,191 @@
+﻿import React from 'react';
+import '../HashTags/bootstrap.css';
+import '../HashTags/style.css';
+import hashTagService from '../../services/hashTag.service';
+import { Link } from 'react-router-dom';
+import ReactPaginate from 'react-paginate';
+import 'react-dropdown/style.css';
+
+import { useDispatch } from 'react-redux'
+import { Component } from 'react';
+
+const options = [
+    '5', '10', '15', '20', '25'
+];
+
+let pageNo = 1;
+let totalCount = 0;
+let perPage = options[0];
+let data = [];
+let TagName = "";
+let Rating = "";
+
+export function GetData() {
+
+
+    //  this.dropdownChange = this.dropdownChange.bind(this)
+
+
+
+    //  componentDidMount() {
+    // this.fetchLanguages();
+    // }
+    const dispatch = useDispatch();
+
+
+
+    var fetchLanguages = async() => {
+
+        var payload = {
+            "pageSize": perPage,
+            "pageNumber": pageNo
+        }
+
+        console.log("page size " + payload.pageSize + " , page no" + payload.pageNumber);
+
+        var a = await new Promise(function (resolve, reject) {
+            hashTagService.getAll(payload).then(result => {
+                resolve(result);
+            }).catch(e => {
+                console.log(e);
+            })
+
+        });
+
+        totalCount = Math.ceil(a.data.totalCounts / perPage)
+
+            data= a.data.hashTags
+
+
+        var json = { totalRecords: a.data.totalCounts }
+        const action = {
+            type:
+                'COUNTS', payload: json
+        };
+        //   const dispatch = useDispatch();
+        dispatch(action);
+
+    }
+
+
+
+}
+
+import Fetch from 'GetData'
+class HashTagList extends Component {
+    constructor(props) {
+        super(props);
+
+      //  this.FetchData = this.FetchData.bind(this);
+        //    this.handleSubmit = this.handleSubmit.bind(this);
+        //   this.handleChange = this.handleChange.bind(this);
+        this.dropdownChange = this.dropdownChange.bind(this)
+        data = Fetch.fetchLanguages();
+    }
+
+
+    componentWillMount() {
+        this.HashTagList();
+    }
+
+    dropdownChange = (option) => {
+        console.log(option.target.value)
+    perPage = parseInt(option.target.value)
+    pageNo = 1
+    console.log(perPage);
+
+    fetchLanguages();
+}
+
+ handlePageClick = (data) => {
+    let selected = data.selected + 1;
+    console.log("selected" + selected);
+    pageNo = selected
+    fetchLanguages();
+};
+
+ refreshPage = () => {
+    fetchLanguages();
+};
+
+
+
+     renderTableData = () => {
+    console.log(data);
+    return data.map((a, index) => {
+        //eslint-disable-next-line
+        const { _Id, tagId, tagName, rating, modifiedAt } = a
+        return (
+            <tr key={a._Id.increment}>
+                <td>{a.tagName}</td>
+                <td>{a.rating}</td>
+                <td>
+                    <Link
+                        to={"/hashTags/" + a.TagName}
+                        className="badge badge-info">
+                        Edit
+                       </Link>
+                </td>
+                <td>
+                    <Link
+                        to={"/hashTags/" + a.TagName}
+                        className="badge badge-danger">
+                        Delete
+                  </Link>
+                </td>
+            </tr>
+        )
+    });
+}
+
+
+render()
+{
+    return (
+        <div className='card'>
+            <div className='card-body'>
+                <div className='col-md-12'>
+                    <div className="input-group-btn">
+                        <Link to="/AddHashTag" className="btn btn-primary mr-2 float-right">
+
+                            Add
+                             </Link>
+                    </div>
+                    <select id="optPageSize" onChange={dropdownChange}>
+                        {options.map((option) => (
+                            <option value={option}>{option}</option>
+                        ))}
+                    </select>
+                    <hr />
+                    <table id='a' className="table table-bordered">
+                        <thead className='thead-light'>
+                            <tr>
+                                <th > Tag Name </th>
+                                <th> Ratings </th>
+                                <th> Edit </th>
+                                <th> Delete </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {renderTableData()}
+                        </tbody>
+                    </table>
+                    <ReactPaginate variant="outlined" color="primary"
+                        previousLabel={'previous'}
+                        nextLabel={'next'}
+                        breakLabel={'...'}
+                        breakClassName={'break-me'}
+                        pageCount={totalCount}
+                        marginPagesDisplayed={10}
+                        pageRangeDisplayed={5}
+                        onPageChange={handlePageClick}
+                        containerClassName={'pagination'}
+                        activeClassName={'active'}
+                    />
+                </div>
+            </div>
+        </div>
+    )
+}
+}
+
