@@ -50,7 +50,7 @@
     "extends": "react-app"
   },
   "scripts": {
-    "start": "env-cmd -f .env.development react-scripts start",
+    "start": "env-cmd -f .env.development react-scripts start node src/index.js",
     "start:production": "env-cmd -f .env.production react-scripts start",
     "build": "env-cmd -f .env.development react-scripts build",
     "build:production": "env-cmd -f .env.production react-scripts build",
